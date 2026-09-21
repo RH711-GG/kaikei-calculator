@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#0d0d0f">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="会計電卓">
+
+  <title>会計電卓</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #0d0d0f;
+      color: white;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+      display: flex;
+      justify-content: center;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 430px;
+      padding: 24px 16px 40px;
+    }
+
+    .title {
+      font-size: 14px;
+      color: #888;
+      margin-bottom: 10px;
+    }
+
+    .display {
+      width: 100%;
+      min-height: 100px;
+      padding: 10px 5px 20px;
+
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-end;
+
+      font-size: 48px;
+      font-weight: 500;
+
+      overflow-wrap: anywhere;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    button {
+      border: none;
+      border-radius: 18px;
+      height: 68px;
+
+      font-size: 25px;
+      font-weight: 600;
+
+      background: #29292d;
+      color: white;
+
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    button:active {
+      transform: scale(0.96);
+      opacity: 0.8;
+    }
+
+    .operator {
+      background: #44444a;
+    }
+
+    .clear {
+      background: #55555b;
+    }
+
+    .equals {
+      background: #6d5dfc;
+    }
+
+    .zero {
+      grid-column: span 2;
+    }
+
+    .checkout {
+      width: 100%;
+      height: 70px;
+      margin-top: 14px;
+
+      border-radius: 18px;
+
+      background: #6d5dfc;
+
+      font-size: 21px;
+      font-weight: 700;
+    }
+
+    .results {
+      display: none;
+      margin-top: 22px;
+    }
+
+    .result-card {
+      background: #1c1c20;
+      border: 1px solid #333338;
+
+      border-radius: 20px;
+      padding: 18px;
+
+      margin-bottom: 12px;
+    }
+
+    .result-title {
+      color: #aaa;
+      font-size: 15px;
+      margin-bottom: 12px;
+    }
+
+    .total {
+      font-size: 34px;
+      font-weight: 700;
+      margin-bottom: 18px;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+
+      font-size: 15px;
+
+      padding: 8px 0;
+
+      color: #aaa;
+    }
+
+    .row span:last-child {
+      color: white;
+      font-weight: 600;
+    }
+
+    .notice {
+      text-align: center;
+      color: #666;
+      font-size: 12px;
+      margin-top: 15px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <div class="title">会計電卓</div>
+
+  <div id="display" class="display">0</div>
+
+  <div class="buttons">
+
+    <button class="clear" onclick="clearAll()">C</button>
+    <button onclick="backspace()">⌫</button>
+    <button class="operator" onclick="inputOperator('/')">÷</button>
+    <button class="operator" onclick="inputOperator('*')">×</button>
+
+    <button onclick="inputNumber('7')">7</button>
+    <button onclick="inputNumber('8')">8</button>
+    <button onclick="inputNumber('9')">9</button>
+    <button class="operator" onclick="inputOperator('-')">−</button>
+
+    <button onclick="inputNumber('4')">4</button>
+    <button onclick="inputNumber('5')">5</button>
+    <button onclick="inputNumber('6')">6</button>
+    <button class="operator" onclick="inputOperator('+')">＋</button>
+
+    <button onclick="inputNumber('1')">1</button>
+    <button onclick="inputNumber('2')">2</button>
+    <button onclick="inputNumber('3')">3</button>
+    <button class="equals" onclick="calculate()">＝</button>
+
+    <button class="zero" onclick="inputNumber('0')">0</button>
+    <button onclick="inputNumber('.')">.</button>
+    <button onclick="calculate()">＝</button>
+
+  </div>
+
+  <button class="checkout" onclick="checkout()">
+    会計
+  </button>
+
+  <div id="results" class="results">
+
+    <div class="result-card">
+
+      <div class="result-title">
+        サービス料 10%
+      </div>
+
+      <div id="total10" class="total">
+        0円
+      </div>
+
+      <div class="row">
+        <span>サービス料</span>
+        <span id="service10">0円</span>
+      </div>
+
+      <div class="row">
+        <span>消費税</span>
+        <span id="tax10">0円</span>
+      </div>
+
+    </div>
+
+
+    <div class="result-card">
+
+      <div class="result-title">
+        サービス料 15%
+      </div>
+
+      <div id="total15" class="total">
+        0円
+      </div>
+
+      <div class="row">
+        <span>サービス料</span>
+        <span id="service15">0円</span>
+      </div>
+
+      <div class="row">
+        <span>消費税</span>
+        <span id="tax15">0円</span>
+      </div>
+
+    </div>
+
+    <div class="notice">
+      1円未満切り捨て<br>
+      計算履歴・会計履歴は保存されません
+    </div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+let expression = "";
+
+const display = document.getElementById("display");
+
+
+function updateDisplay() {
+
+  if (expression === "") {
+    display.textContent = "0";
+    return;
+  }
+
+  display.textContent = expression
+    .replaceAll("*", "×")
+    .replaceAll("/", "÷");
+
+}
+
+
+function hideResults() {
+
+  document.getElementById("results").style.display = "none";
+
+}
+
+
+function inputNumber(number) {
+
+  hideResults();
+
+  if (number === ".") {
+
+    const parts = expression.split(/[+\-*/]/);
+    const currentNumber = parts[parts.length - 1];
+
+    if (currentNumber.includes(".")) {
+      return;
+    }
+
+    if (currentNumber === "") {
+      expression += "0";
+    }
+  }
+
+  expression += number;
+
+  updateDisplay();
+
+}
+
+
+function inputOperator(operator) {
+
+  hideResults();
+
+  if (expression === "") {
+    return;
+  }
+
+  const lastCharacter =
+    expression[expression.length - 1];
+
+  if ("+-*/".includes(lastCharacter)) {
+
+    expression =
+      expression.slice(0, -1) + operator;
+
+  } else {
+
+    expression += operator;
+
+  }
+
+  updateDisplay();
+
+}
+
+
+function clearAll() {
+
+  expression = "";
+
+  updateDisplay();
+
+  hideResults();
+
+}
+
+
+function backspace() {
+
+  expression =
+    expression.slice(0, -1);
+
+  updateDisplay();
+
+  hideResults();
+
+}
+
+
+function getResult() {
+
+  if (expression === "") {
+    return 0;
+  }
+
+  if (!/^[0-9+\-*/.]+$/.test(expression)) {
+    return null;
+  }
+
+  try {
+
+    const result =
+      Function(
+        '"use strict"; return (' +
+        expression +
+        ')'
+      )();
+
+    if (!Number.isFinite(result)) {
+      return null;
+    }
+
+    return result;
+
+  } catch {
+
+    return null;
+
+  }
+
+}
+
+
+function calculate() {
+
+  const result = getResult();
+
+  if (result === null) {
+
+    display.textContent = "エラー";
+
+    return;
+
+  }
+
+  expression =
+    String(result);
+
+  updateDisplay();
+
+}
+
+
+function yen(number) {
+
+  return (
+    Math.floor(number)
+      .toLocaleString("ja-JP") +
+    "円"
+  );
+
+}
+
+
+function checkout() {
+
+  const base = getResult();
+
+  if (
+    base === null ||
+    base < 0
+  ) {
+
+    display.textContent = "エラー";
+
+    return;
+
+  }
+
+
+  /* サービス料10% */
+
+  const service10 =
+    Math.floor(base * 0.10);
+
+  const subtotal10 =
+    base + service10;
+
+  const tax10 =
+    Math.floor(subtotal10 * 0.10);
+
+  const total10 =
+    Math.floor(
+      subtotal10 + tax10
+    );
+
+
+  /* サービス料15% */
+
+  const service15 =
+    Math.floor(base * 0.15);
+
+  const subtotal15 =
+    base + service15;
+
+  const tax15 =
+    Math.floor(subtotal15 * 0.10);
+
+  const total15 =
+    Math.floor(
+      subtotal15 + tax15
+    );
+
+
+  document.getElementById(
+    "service10"
+  ).textContent = yen(service10);
+
+  document.getElementById(
+    "tax10"
+  ).textContent = yen(tax10);
+
+  document.getElementById(
+    "total10"
+  ).textContent = yen(total10);
+
+
+  document.getElementById(
+    "service15"
+  ).textContent = yen(service15);
+
+  document.getElementById(
+    "tax15"
+  ).textContent = yen(tax15);
+
+  document.getElementById(
+    "total15"
+  ).textContent = yen(total15);
+
+
+  document.getElementById(
+    "results"
+  ).style.display = "block";
+
+}
+
+</script>
+
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./service-worker.js");
+  });
+}
+</script></body>
+</html>
