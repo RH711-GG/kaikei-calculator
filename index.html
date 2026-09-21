@@ -45,20 +45,21 @@
       margin-bottom: 10px;
     }
 
-    .display {
-      width: 100%;
-      min-height: 100px;
-      padding: 10px 5px 20px;
+  .display {
+  width: 100%;
+  height: 100px;
+  padding: 10px 5px 20px;
 
-      display: flex;
-      align-items: flex-end;
-      justify-content: flex-end;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
 
-      font-size: 48px;
-      font-weight: 500;
+  font-size: 48px;
+  font-weight: 500;
 
-      overflow-wrap: anywhere;
-    }
+  white-space: nowrap;
+  overflow: hidden;
+}
 
     .buttons {
       display: grid;
@@ -306,9 +307,20 @@ function updateDisplay() {
     .replaceAll("/", "÷");
 
   display.textContent = formatted;
+
+/* 表示欄に収まるまで自動で文字を小さくする */
+display.style.fontSize = "48px";
+
+let fontSize = 48;
+
+while (
+  display.scrollWidth > display.clientWidth &&
+  fontSize > 16
+) {
+  fontSize--;
+  display.style.fontSize = fontSize + "px";
 }
-
-
+}
 function hideResults() {
 
   document.getElementById("results").style.display = "none";
