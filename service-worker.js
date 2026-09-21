@@ -1,4 +1,4 @@
-const CACHE_NAME = "kaikei-calculator-v1";
+const CACHE_NAME = "kaikei-calculator-v2";
 
 const FILES = [
   "./",
