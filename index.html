@@ -95,8 +95,10 @@
     }
 
     .equals {
-      background: #6d5dfc;
-    }
+  background: #e32636;
+  grid-row: span 2;
+  height: auto;
+}
 
     .zero {
       grid-column: span 2;
@@ -109,7 +111,7 @@
 
       border-radius: 18px;
 
-      background: #6d5dfc;
+      background: #e32636;
 
       font-size: 21px;
       font-weight: 700;
@@ -137,11 +139,17 @@
     }
 
     .total {
-      font-size: 34px;
+      font-size: 40px;
       font-weight: 700;
       margin-bottom: 18px;
     }
+.result-card:first-child .total {
+  color: #ffffff;
+}
 
+.result-card:nth-child(2) .total {
+  color: #ff4d5a;
+}
     .row {
       display: flex;
       justify-content: space-between;
@@ -200,7 +208,6 @@
 
     <button class="zero" onclick="inputNumber('0')">0</button>
     <button onclick="inputNumber('.')">.</button>
-    <button onclick="calculate()">＝</button>
 
   </div>
 
@@ -279,10 +286,26 @@ function updateDisplay() {
     return;
   }
 
-  display.textContent = expression
+  const formatted = expression
+    .split(/([+\-*/])/)
+    .map(part => {
+
+      if (/^\d+(\.\d*)?$/.test(part)) {
+        const [integer, decimal] = part.split(".");
+        const commaInteger = Number(integer).toLocaleString("ja-JP");
+
+        return decimal !== undefined
+          ? commaInteger + "." + decimal
+          : commaInteger;
+      }
+
+      return part;
+    })
+    .join("")
     .replaceAll("*", "×")
     .replaceAll("/", "÷");
 
+  display.textContent = formatted;
 }
 
 
