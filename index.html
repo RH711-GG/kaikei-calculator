@@ -167,6 +167,77 @@ button:active {
   font-weight: 600;
 }
 
+
+/* 割り勘 */
+
+.split-card {
+  background: #1c1c20;
+  border: 1px solid #333338;
+  border-radius: 20px;
+
+  padding: 18px;
+  margin-top: 22px;
+}
+
+.split-title {
+  color: #aaa;
+  font-size: 15px;
+  margin-bottom: 18px;
+}
+
+.people-control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+
+  margin-bottom: 24px;
+}
+
+.people-button {
+  width: 58px;
+  height: 50px;
+  border-radius: 14px;
+
+  font-size: 26px;
+
+  background: #3a3a40;
+}
+
+.people-number {
+  min-width: 70px;
+
+  text-align: center;
+
+  font-size: 25px;
+  font-weight: 700;
+}
+
+.split-result {
+  padding: 14px 0;
+  border-top: 1px solid #333338;
+}
+
+.split-result:last-child {
+  padding-bottom: 0;
+}
+
+.split-label {
+  color: #aaa;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.split-amount {
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1.6;
+}
+
+.split-result.card .split-amount {
+  color: #ff4d5a;
+}
+
 .notice {
   text-align: center;
   color: #666;
@@ -264,6 +335,70 @@ button:active {
 
     </div>
 
+
+    <!-- 割り勘 -->
+
+    <div class="split-card">
+
+      <div class="split-title">
+        割り勘
+      </div>
+
+      <div class="people-control">
+
+        <button
+          class="people-button"
+          onclick="changePeople(-1)">
+          −
+        </button>
+
+        <div
+          id="peopleNumber"
+          class="people-number">
+          2人
+        </div>
+
+        <button
+          class="people-button"
+          onclick="changePeople(1)">
+          ＋
+        </button>
+
+      </div>
+
+
+      <div class="split-result">
+
+        <div class="split-label">
+          現金会計
+        </div>
+
+        <div
+          id="splitCash"
+          class="split-amount">
+          0円
+        </div>
+
+      </div>
+
+
+      <div class="split-result card">
+
+        <div class="split-label">
+          カード会計
+        </div>
+
+        <div
+          id="splitCard"
+          class="split-amount">
+          0円
+        </div>
+
+      </div>
+
+    </div>
+
+
     <div class="notice">
       1円未満切り捨て<br>
       計算履歴・会計履歴は保存されません
@@ -278,7 +413,13 @@ button:active {
 
 let expression = "";
 
-const display = document.getElementById("display");
+let people = 2;
+
+let currentTotalCash = 0;
+let currentTotalCard = 0;
+
+const display =
+  document.getElementById("display");
 
 
 function updateDisplay() {
@@ -293,8 +434,13 @@ function updateDisplay() {
     .map(part => {
 
       if (/^\d+(\.\d*)?$/.test(part)) {
-        const [integer, decimal] = part.split(".");
-        const commaInteger = Number(integer).toLocaleString("ja-JP");
+
+        const [integer, decimal] =
+          part.split(".");
+
+        const commaInteger =
+          Number(integer)
+            .toLocaleString("ja-JP");
 
         return decimal !== undefined
           ? commaInteger + "." + decimal
@@ -309,23 +455,29 @@ function updateDisplay() {
 
   display.textContent = formatted;
 
-  /* 表示欄に収まるまで自動で文字を小さくする */
   display.style.fontSize = "48px";
 
   let fontSize = 48;
 
   while (
-    display.scrollWidth > display.clientWidth &&
+    display.scrollWidth >
+      display.clientWidth &&
     fontSize > 16
   ) {
+
     fontSize--;
-    display.style.fontSize = fontSize + "px";
+
+    display.style.fontSize =
+      fontSize + "px";
   }
 }
 
 
 function hideResults() {
-  document.getElementById("results").style.display = "none";
+
+  document.getElementById(
+    "results"
+  ).style.display = "none";
 }
 
 
@@ -335,10 +487,15 @@ function inputNumber(number) {
 
   if (number === ".") {
 
-    const parts = expression.split(/[+\-*/]/);
-    const currentNumber = parts[parts.length - 1];
+    const parts =
+      expression.split(/[+\-*/]/);
 
-    if (currentNumber.includes(".")) {
+    const currentNumber =
+      parts[parts.length - 1];
+
+    if (
+      currentNumber.includes(".")
+    ) {
       return;
     }
 
@@ -362,12 +519,19 @@ function inputOperator(operator) {
   }
 
   const lastCharacter =
-    expression[expression.length - 1];
+    expression[
+      expression.length - 1
+    ];
 
-  if ("+-*/".includes(lastCharacter)) {
+  if (
+    "+-*/".includes(
+      lastCharacter
+    )
+  ) {
 
     expression =
-      expression.slice(0, -1) + operator;
+      expression.slice(0, -1)
+      + operator;
 
   } else {
 
@@ -406,7 +570,11 @@ function getResult() {
     return 0;
   }
 
-  if (!/^[0-9+\-*/.]+$/.test(expression)) {
+  if (
+    !/^[0-9+\-*/.]+$/.test(
+      expression
+    )
+  ) {
     return null;
   }
 
@@ -419,7 +587,9 @@ function getResult() {
         ')'
       )();
 
-    if (!Number.isFinite(result)) {
+    if (
+      !Number.isFinite(result)
+    ) {
       return null;
     }
 
@@ -438,7 +608,8 @@ function calculate() {
 
   if (result === null) {
 
-    display.textContent = "エラー";
+    display.textContent =
+      "エラー";
 
     return;
   }
@@ -454,9 +625,121 @@ function yen(number) {
 
   return (
     Math.floor(number)
-      .toLocaleString("ja-JP") +
-    "円"
+      .toLocaleString("ja-JP")
+    + "円"
   );
+}
+
+
+/* 割り勘計算 */
+
+function makeSplitText(
+  total,
+  count
+) {
+
+  const basic =
+    Math.floor(total / count);
+
+  const remainder =
+    total % count;
+
+
+  if (remainder === 0) {
+
+    return (
+      yen(basic) +
+      " × " +
+      count +
+      "人"
+    );
+  }
+
+
+  const high =
+    basic + 1;
+
+  const highCount =
+    remainder;
+
+  const lowCount =
+    count - remainder;
+
+
+  let text = "";
+
+
+  if (highCount > 0) {
+
+    text +=
+      yen(high) +
+      " × " +
+      highCount +
+      "人";
+  }
+
+
+  if (lowCount > 0) {
+
+    if (text !== "") {
+      text += "<br>";
+    }
+
+    text +=
+      yen(basic) +
+      " × " +
+      lowCount +
+      "人";
+  }
+
+
+  return text;
+}
+
+
+function updateSplit() {
+
+  document.getElementById(
+    "peopleNumber"
+  ).textContent =
+    people + "人";
+
+
+  document.getElementById(
+    "splitCash"
+  ).innerHTML =
+    makeSplitText(
+      currentTotalCash,
+      people
+    );
+
+
+  document.getElementById(
+    "splitCard"
+  ).innerHTML =
+    makeSplitText(
+      currentTotalCard,
+      people
+    );
+}
+
+
+function changePeople(change) {
+
+  people += change;
+
+
+  if (people < 2) {
+    people = 2;
+  }
+
+
+  if (people > 10) {
+    people = 10;
+  }
+
+
+  updateSplit();
 }
 
 
@@ -469,7 +752,8 @@ function checkout() {
     base < 0
   ) {
 
-    display.textContent = "エラー";
+    display.textContent =
+      "エラー";
 
     return;
   }
@@ -484,7 +768,9 @@ function checkout() {
     base + serviceCash;
 
   const taxCash =
-    Math.floor(subtotalCash * 0.10);
+    Math.floor(
+      subtotalCash * 0.10
+    );
 
   const totalCash =
     Math.floor(
@@ -501,7 +787,9 @@ function checkout() {
     base + serviceCard;
 
   const taxCard =
-    Math.floor(subtotalCard * 0.10);
+    Math.floor(
+      subtotalCard * 0.10
+    );
 
   const totalCard =
     Math.floor(
@@ -509,45 +797,74 @@ function checkout() {
     );
 
 
+  currentTotalCash =
+    totalCash;
+
+  currentTotalCard =
+    totalCard;
+
+
   document.getElementById(
     "serviceCash"
-  ).textContent = yen(serviceCash);
+  ).textContent =
+    yen(serviceCash);
 
   document.getElementById(
     "taxCash"
-  ).textContent = yen(taxCash);
+  ).textContent =
+    yen(taxCash);
 
   document.getElementById(
     "totalCash"
-  ).textContent = yen(totalCash);
+  ).textContent =
+    yen(totalCash);
 
 
   document.getElementById(
     "serviceCard"
-  ).textContent = yen(serviceCard);
+  ).textContent =
+    yen(serviceCard);
 
   document.getElementById(
     "taxCard"
-  ).textContent = yen(taxCard);
+  ).textContent =
+    yen(taxCard);
 
   document.getElementById(
     "totalCard"
-  ).textContent = yen(totalCard);
+  ).textContent =
+    yen(totalCard);
+
+
+  /* 割り勘人数を毎回2人に戻す */
+
+  people = 2;
+
+  updateSplit();
 
 
   document.getElementById(
     "results"
-  ).style.display = "block";
-
+  ).style.display =
+    "block";
 }
 
 </script>
 
+
 <script>
 if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./service-worker.js");
-  });
+
+  window.addEventListener(
+    "load",
+    () => {
+
+      navigator.serviceWorker.register(
+        "./service-worker.js"
+      );
+
+    }
+  );
 }
 </script>
 
