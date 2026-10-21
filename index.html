@@ -34,14 +34,14 @@
       justify-content: center;
     }
 
-    .app {
-      width: 100%;
-      max-width: 430px;
-      min-height: 100dvh;
-      padding: 20px 18px 24px;
-      display: flex;
-flex-direction: column;
-    }
+.app {
+  width: 100%;
+  max-width: 430px;
+  height: 100dvh;
+  padding: 20px 18px max(28px, env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+}
 
     /* 上部 */
     .top-bar {
@@ -82,30 +82,30 @@ flex-direction: column;
     }
 
     /* 表示部分 */
-    .display {
-      margin-top: 24px;
-      width: 100%;
-      height: 120px;
-      padding: 12px 8px 18px;
+.display {
+  margin-top: 50px;
+  width: 100%;
+  height: 120px;
+  padding: 12px 8px 18px;
 
-      display: flex;
-      align-items: flex-end;
-      justify-content: flex-end;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
 
-      font-size: 52px;
-      font-weight: 400;
+  font-size: 52px;
+  font-weight: 400;
 
-      white-space: nowrap;
-      overflow: hidden;
-    }
+  white-space: nowrap;
+  overflow: hidden;
+}
 
     /* 電卓 */
-    .buttons {
-      margin-top: auto;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-    }
+.buttons {
+  margin-top: auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
 
     .buttons button {
       border: none;
