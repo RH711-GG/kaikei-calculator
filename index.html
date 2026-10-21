@@ -37,7 +37,7 @@
 .app {
   width: 100%;
   max-width: 430px;
-  height: 100dvh;
+min-height: 100dvh;
 padding: 20px 18px max(50px, env(safe-area-inset-bottom));
   display: flex;
   flex-direction: column;
@@ -85,14 +85,14 @@ padding: 20px 18px max(50px, env(safe-area-inset-bottom));
 .display {
 margin-top: 24px;
   width: 100%;
-  height: 90px;
+  height: 140px;
   padding: 12px 8px 18px;
 
   display: flex;
   align-items: flex-end;
   justify-content: flex-end;
 
-  font-size: 52px;
+  font-size: 58px;
   font-weight: 400;
 
   white-space: nowrap;
@@ -104,7 +104,7 @@ margin-top: 24px;
   margin-top: auto;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
+  gap: 7px;
 }
 
     .buttons button {
@@ -1331,7 +1331,7 @@ margin-top: 24px;
         "totalCard"
       ).textContent =
         yen(totalCard);
-        
+
         display.textContent = base.toLocaleString("ja-JP");
 
 
