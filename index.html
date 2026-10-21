@@ -37,7 +37,10 @@
     .app {
       width: 100%;
       max-width: 430px;
-      padding: 20px 18px 40px;
+      min-height: 100dvh;
+      padding: 20px 18px 8px;
+      display: flex;
+flex-direction: column;
     }
 
     /* 上部 */
@@ -97,6 +100,7 @@
 
     /* 電卓 */
     .buttons {
+      margin-top: auto;
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 12px;
