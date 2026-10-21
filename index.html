@@ -1346,8 +1346,14 @@ margin-top: 24px;
         "results"
       ).style.display =
         "block";
+    
+setTimeout(() => {
+  document.getElementById("results").scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+}, 100);
     }
-
   </script>
 
 
