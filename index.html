@@ -1269,10 +1269,10 @@ margin-top: 20px;
           subtotalCash * 0.10
         );
 
-      const totalCash =
-        Math.floor(
-          subtotalCash + taxCash
-        );
+const totalCash =
+  Math.floor(
+    (subtotalCash + taxCash) / 10
+  ) * 10;
 
 
       /* カード：サービス料10% → 消費税10% */
@@ -1288,10 +1288,10 @@ margin-top: 20px;
           subtotalCard * 0.10
         );
 
-      const totalCard =
-        Math.floor(
-          subtotalCard + taxCard
-        );
+const totalCard =
+  Math.floor(
+    (subtotalCard + taxCard) / 10
+  ) * 10;
 
 
       currentTotalCash =
