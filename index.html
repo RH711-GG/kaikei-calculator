@@ -196,9 +196,9 @@ margin-top: 20px;
       color: #ffffff;
     }
 
-    .result-card:nth-child(2) .total {
-      color: #ff4d5a;
-    }
+#totalCard {
+  color: #ff4d5a;
+}
 
     .row {
       display: flex;
@@ -684,7 +684,56 @@ margin-top: 20px;
           scale(0.2) rotate(-140deg);
       }
     }
+/* お釣り計算 */
 
+.change-card {
+  margin-top: 12px;
+}
+
+.change-input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  color: #aaa;
+  font-size: 15px;
+}
+
+.change-input-row input {
+  flex: 1;
+  min-width: 0;
+  height: 48px;
+  padding: 0 14px;
+
+  border: 1px solid #3a3a40;
+  border-radius: 14px;
+
+  background: #111114;
+  color: white;
+
+  font-size: 24px;
+  font-weight: 700;
+
+  text-align: right;
+  outline: none;
+}
+/* 数字入力の上下矢印を消す */
+.change-input-row input::-webkit-outer-spin-button,
+.change-input-row input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.change-input-row input[type="number"] {
+  -moz-appearance: textfield;
+}
+.change-input-row input:focus {
+  border-color: #666;
+}
+
+.change-input-row input::placeholder {
+  color: #555;
+}
     .notice {
       text-align: center;
       color: #666;
@@ -760,7 +809,33 @@ margin-top: 20px;
         </div>
 
       </div>
+<!-- お釣り計算 -->
 
+<div class="result-card change-card">
+
+  <div class="result-title">
+    お釣り計算
+  </div>
+
+  <div class="change-input-row">
+    <span>お預かり</span>
+
+    <input
+      id="receivedAmount"
+      type="number"
+      inputmode="numeric"
+      placeholder="0"
+      oninput="calculateChange()"
+    >
+
+    <span>円</span>
+  </div>
+
+  <div class="row">
+    <span>お釣り</span>
+    <span id="changeAmount">0円</span>
+  </div>
+  </div>
       <div class="result-card">
 
         <div class="result-title">
@@ -782,6 +857,8 @@ margin-top: 20px;
         </div>
 
       </div>
+
+
 
       <!-- 割り勘 -->
 
@@ -1173,7 +1250,34 @@ margin-top: 20px;
         );
     }
 
+function calculateChange() {
 
+  const input =
+    document.getElementById("receivedAmount");
+
+  const changeElement =
+    document.getElementById("changeAmount");
+
+  const received =
+    Number(input.value);
+
+  if (!input.value) {
+    changeElement.textContent = "0円";
+    return;
+  }
+
+  const difference =
+    received - currentTotalCash;
+
+  if (difference >= 0) {
+    changeElement.textContent =
+      yen(difference);
+  } else {
+    changeElement.textContent =
+      "不足 " + yen(Math.abs(difference));
+  }
+
+}
     function changePeople(change) {
 
       people += change;
@@ -1299,7 +1403,14 @@ const totalCard =
 
       currentTotalCard =
         totalCard;
+const receivedInput =
+  document.getElementById("receivedAmount");
 
+const changeElement =
+  document.getElementById("changeAmount");
+
+receivedInput.value = "";
+changeElement.textContent = "0円";
 
       document.getElementById(
         "serviceCash"
